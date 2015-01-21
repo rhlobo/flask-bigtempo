@@ -39,6 +39,7 @@ pip-log.txt
 
 ### Logs and databases
 *.log
+*.db
 *.sql
 *.sqlite
 *.cover

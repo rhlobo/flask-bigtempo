@@ -1,4 +1,4 @@
 __version__ = '0.1'
 
 
-from .core import BigTempoAPI
+from .datastore import DatastoreAPI

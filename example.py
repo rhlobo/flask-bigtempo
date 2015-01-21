@@ -2,11 +2,15 @@
 
 
 from flask import Flask
-from flask.ext.bigtempo import BigTempoAPI
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.bigtempo import DatastoreAPI
 
 
 app = Flask(__name__)
-bigtempo = BigTempoAPI(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+
+db = SQLAlchemy(app)
+datastore = DatastoreAPI(app, db.engine)
 
 
 @app.route('/')
