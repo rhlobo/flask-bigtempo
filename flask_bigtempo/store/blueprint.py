@@ -1,12 +1,11 @@
 import flask
 import pandas
 
+from .defaults import *
 
-_DEFAULT_JSON_FORMAT = 'columns'
 
-
-def new_blueprint(storage, default_json_format=_DEFAULT_JSON_FORMAT):
-    blueprint = flask.Blueprint('datastore', __name__, url_prefix='/api/store')
+def new_blueprint(storage, default_json_format=DEFAULT_JSON_FORMAT):
+    blueprint = flask.Blueprint('datastore', __name__, url_prefix=API_URL_PREFIX)
 
 
     @blueprint.route('/<reference>/<symbol>', methods=['POST', 'PUT'])
@@ -23,8 +22,10 @@ def new_blueprint(storage, default_json_format=_DEFAULT_JSON_FORMAT):
     @blueprint.route('/<reference>/<symbol>', methods=['GET'])
     def retrieve(reference, symbol):
         jsonformat = flask.request.args.get('jsonformat', default_json_format)
+        start = flask.request.args.get('start', None)
+        end = flask.request.args.get('end', None)
 
-        data = storage.retrieve(reference, symbol)
+        data = storage.retrieve(reference, symbol, start=start, end=end)
         if data is None:
             flask.abort(404)
 
