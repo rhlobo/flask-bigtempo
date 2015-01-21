@@ -15,7 +15,7 @@ datastore = DatastoreAPI(app, db.engine)
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return 'Welcome!'
 
 
 if __name__ == '__main__':
