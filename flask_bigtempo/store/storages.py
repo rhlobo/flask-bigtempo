@@ -17,7 +17,7 @@ class SQLAlchemyStorage(object):
         self.tablename_base = tablename_base
 
     def save(self, dataframe, reference, symbol):
-        tablename = _tablename(reference, symbol)
+        tablename = self._tablename(reference, symbol)
 
         exists_table = self.sqlengine.has_table(tablename)
         if exists_table:
@@ -32,7 +32,7 @@ class SQLAlchemyStorage(object):
             sqlalchemy.Index('idx_index', table.c.index).create(self.sqlengine)
 
     def retrieve(self, reference, symbol, start=None, end=None):
-        tablename = _tablename(reference, symbol)
+        tablename = self._tablename(reference, symbol)
 
         exists_table = self.sqlengine.has_table(tablename)
         if not exists_table:
@@ -41,9 +41,8 @@ class SQLAlchemyStorage(object):
         sql_string = _generate_retrieval_sql(tablename, start=start, end=end)
         return pandas.read_sql_query(sql_string, self.sqlengine, parse_dates=['index'], index_col='index')
 
-
-def _tablename(reference, symbol):
-    return self.tablename_base.format(reference=reference, symbol=symbol)
+    def _tablename(self, reference, symbol):
+        return self.tablename_base.format(reference=reference, symbol=symbol)
 
 
 def _datetime_str(date):

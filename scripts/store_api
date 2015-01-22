@@ -32,14 +32,17 @@ def rest_retrieve(reference, symbol, start=None, end=None,
 
 	data = clients.StoreRestClient(host).retrieve(reference, symbol,
 		                                          start=start, end=end,
-		                                          jsonformat=jsonformat):
+		                                          jsonformat=jsonformat)
 	if data is None:
+		print 'ERROR: No data returned'
 		sys.exit(1)
 
 	print data.to_json(orient=jsonformat, date_format='iso')
 
 
 def _parse_datetime_str(date_str):
+	if date_str is None:
+		return None
 	return dateutil.parser.parse(date_str)
 
 
