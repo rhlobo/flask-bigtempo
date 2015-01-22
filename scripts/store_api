@@ -40,6 +40,13 @@ def rest_retrieve(reference, symbol, start=None, end=None,
 	print data.to_json(orient=jsonformat, date_format='iso')
 
 
+@argh.named('delete')
+def rest_delete(reference, symbol, host=defaults.DEFAULT_HOST):
+    if not clients.StoreRestClient(host).delete(reference, symbol):
+        print 'ERROR: Could not delete'
+        sys.exit(1)
+
+
 def _parse_datetime_str(date_str):
 	if date_str is None:
 		return None
@@ -49,7 +56,8 @@ def _parse_datetime_str(date_str):
 if __name__ == '__main__':
     parser = argh.ArghParser()
     parser.add_commands([rest_save,
-                         rest_retrieve],
+                         rest_retrieve,
+                         rest_delete],
                         namespace='rest',
                         title='REST interface client commands')
 

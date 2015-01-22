@@ -16,7 +16,7 @@ def new_blueprint(storage, default_json_format=DEFAULT_JSON_FORMAT):
         data = pandas.read_json(json, orient=jsonformat)
         storage.save(data, reference, symbol)
 
-        return flask.Response('', content_type='application/json')
+        return flask.jsonify({'status': True})
 
 
     @blueprint.route('/<reference>/<symbol>', methods=['GET'])
@@ -31,6 +31,12 @@ def new_blueprint(storage, default_json_format=DEFAULT_JSON_FORMAT):
 
         json = data.to_json(orient=jsonformat, date_format='iso')
         return flask.Response(json, content_type='application/json')
+
+    @blueprint.route('/<reference>/<symbol>', methods=['DELETE'])
+    def delete(reference, symbol):
+        status = storage.delete(reference, symbol)
+
+        return flask.jsonify({'status': status})
 
 
     return blueprint

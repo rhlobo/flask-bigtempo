@@ -42,6 +42,14 @@ class StoreRestClient(object):
         json = response.text
         return pandas.read_json(json, orient=jsonformat)
 
+    def delete(self, reference, symbol):
+        url = '{host}{api_prefix}/{reference}/{symbol}'.format(host=self.host,
+                                                               api_prefix=API_URL_PREFIX,
+                                                               reference=reference,
+                                                               symbol=symbol)
+        response = requests.delete(url)
+        return response.status_code in [200, 204]
+
 
 class StoreRestDatasource(object):
 

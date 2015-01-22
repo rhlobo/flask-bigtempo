@@ -41,6 +41,16 @@ class SQLAlchemyStorage(object):
         sql_string = _generate_retrieval_sql(tablename, start=start, end=end)
         return pandas.read_sql_query(sql_string, self.sqlengine, parse_dates=['index'], index_col='index')
 
+    def delete(self, reference, symbol):
+        tablename = self._tablename(reference, symbol)
+
+        exists_table = self.sqlengine.has_table(tablename)
+        if not exists_table:
+            return True
+
+        self.sqlengine.execute('DROP TABLE "%s"' % tablename)
+        return True
+
     def _tablename(self, reference, symbol):
         return self.tablename_base.format(reference=reference, symbol=symbol)
 
