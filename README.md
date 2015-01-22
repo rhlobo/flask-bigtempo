@@ -68,6 +68,15 @@ if __name__ == '__main__':
     app.run(debug=True)
 ```
 
+The following methods are made available:
+
+- Data retrieval: __GET__ /api/store/<reference>/<symbol>
+- Data insertion: __PUT__ /api/store/<reference>/<symbol>
+- Data deletion: __DELETE__ /api/store/<reference>/<symbol>
+
+Optionally, you can use the `jsonformat` url parameter (eg.: `?jsonformat=index`).
+The formats available are the same provided by the pandas `to_json` and `read_json` methods.
+
 
 ### REST Client
 You can find it at `flask_bigtempo/store/clients.py`.
