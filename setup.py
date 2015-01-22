@@ -62,7 +62,9 @@ setup(
     packages=['flask_bigtempo'],
     package_data={'': ['README.md',
                        'LICENSE',
-                       'requirements.txt']},
+                       'requirements.txt',
+                       'scripts/store_api']},
+    scripts=['scripts/store_api']
 
     include_package_data=True,
     zip_safe=False
