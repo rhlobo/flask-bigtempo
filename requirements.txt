@@ -1,7 +1,9 @@
 Flask
 Flask-SQLAlchemy
+
 argh
-Requests
-Bigtempo
-Pandas
+requests
 dateutils
+
+bigtempo
+pandas

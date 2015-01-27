@@ -7,6 +7,7 @@ import argh
 import pandas
 import dateutil.parser
 
+import flask_bigtempo.utils as butils
 import flask_bigtempo.store.defaults as defaults
 import flask_bigtempo.store.clients as clients
 
@@ -14,43 +15,38 @@ import flask_bigtempo.store.clients as clients
 @argh.named('save')
 def rest_save(reference, symbol,
 	          jsondata,
-	          jsonformat=defaults.DEFAULT_JSON_FORMAT,
+	          json_format=defaults.DEFAULT_JSON_FORMAT,
 	          host=defaults.DEFAULT_HOST):
-	data = pandas.read_json(jsondata, orient=jsonformat)
+	data = pandas.read_json(jsondata, orient=json_format)
 
-	if not clients.StoreRestClient(host).save(data, reference, symbol, jsonformat=jsonformat):
+	if not clients.DFStoreRestClient(host).save(data, reference, symbol, json_format=json_format):
 		sys.exit(1)
 
 
 
 @argh.named('retrieve')
 def rest_retrieve(reference, symbol, start=None, end=None,
-	              jsonformat=defaults.DEFAULT_JSON_FORMAT,
+	              json_format=defaults.DEFAULT_JSON_FORMAT,
+                  date_format=defaults.DEFAULT_DATE_FORMAT,
 	              host=defaults.DEFAULT_HOST):
-	start = _parse_datetime_str(start)
-	end = _parse_datetime_str(end)
+	start = butils.parse_datetime_str(start)
+	end = butils.parse_datetime_str(end)
 
-	data = clients.StoreRestClient(host).retrieve(reference, symbol,
+	data = clients.DFStoreRestClient(host).retrieve(reference, symbol,
 		                                          start=start, end=end,
-		                                          jsonformat=jsonformat)
+		                                          json_format=json_format)
 	if data is None:
 		print 'ERROR: No data returned'
 		sys.exit(1)
 
-	print data.to_json(orient=jsonformat, date_format='iso')
+	print data.to_json(orient=json_format, date_format=date_format)
 
 
 @argh.named('delete')
 def rest_delete(reference, symbol, host=defaults.DEFAULT_HOST):
-    if not clients.StoreRestClient(host).delete(reference, symbol):
+    if not clients.DFStoreRestClient(host).delete(reference, symbol):
         print 'ERROR: Could not delete'
         sys.exit(1)
-
-
-def _parse_datetime_str(date_str):
-	if date_str is None:
-		return None
-	return dateutil.parser.parse(date_str)
 
 
 if __name__ == '__main__':

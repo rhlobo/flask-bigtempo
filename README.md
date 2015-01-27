@@ -29,6 +29,8 @@ Here you can find:
 - A __flask extension__ that exposes an REST API that handles data as json
 - A __REST client__ that can communicate with the REST API
 - A __command line script__ that enables shell usage of the REST API
+- Some __bigtempo datasources__ that allows easy integration, after all, `store api` was conceived exactly to serve data to `bigtempo`.
+
 
 ### Storage implementation
 For the moment the is only one implementation based on SQLAlchemy.
@@ -74,24 +76,43 @@ The following methods are made available:
 - Data insertion: __PUT__ /api/store/{reference}/{symbol}
 - Data deletion: __DELETE__ /api/store/{reference}/{symbol}
 
-Optionally, you can use the `jsonformat` url parameter (eg.: `?jsonformat=index`).
+Optionally, you can use aditional url parameters:
+
+- `json_format` (eg.: `?json_format=index`).
+- `date_format` (eg.: `?date_format=iso`).
 The formats available are the same provided by the pandas `to_json` and `read_json` methods.
 
 
-### REST Client
-You can find it at `flask_bigtempo/store/clients.py`.
+### REST Clients
+You can find them at `flask_bigtempo/store/clients.py`:
+
+- `DFStoreRestClient` works with Dataframes as input and output;
+- `JSONStoreRestClient` works with JSON as input and output;
 
 Using it should be as simple as:
 ```python
 import flask_bigtempo.store.clients as store_client
 
-api = store_client.StoreRestClient()
+api = store_client.DFStoreRestClient()
 dataframe = api.retrieve('HDI', 'Brazil')
 ```
 
 
 ### CL Script
 Its code is available at the `scripts` directory.
-As soon as you install this lib at your computer, `client_api` should be available on the PATH.
+As soon as you install this lib at your computer, `store_api` should be available on the PATH.
 
-You can learn more about its usage by executing `client_api -h`
+You can learn more about its usage by executing `store_api -h`
+
+
+### Bigtempo DataSources
+Available at `flask_bigtempo/store/datasources.py`.
+
+You can import it by:
+```python
+import flask_bigtempo.store.datasources as datasources
+
+ds = datasources.RESTStoreDatasource('example')
+```
+
+And all that is left is to register it to your bigtempo engine.

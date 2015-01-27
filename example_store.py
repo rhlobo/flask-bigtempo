@@ -15,7 +15,11 @@ datastore = DatastoreAPI(app, db.engine)
 
 @app.route('/')
 def hello_world():
-    return 'Welcome!'
+    return '''
+           <h1>Welcome to the store web API example!</h1>
+           Try saving and retrieving data to /api/store/{reference}/{symbol}
+           '''
+
 
 
 if __name__ == '__main__':

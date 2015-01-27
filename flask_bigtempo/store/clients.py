@@ -8,28 +8,47 @@ import requests
 from .defaults import *
 
 
-class StoreRestClient(object):
+class DFStoreRestClient(object):
+
+    def __init__(self, host=DEFAULT_HOST):
+        self.host = host
+        self.json_client = JSONStoreRestClient(host)
+
+    def save(self, data, reference, symbol, json_format=DEFAULT_JSON_FORMAT, date_format=DEFAULT_DATE_FORMAT):
+        json = data.to_json(orient=json_format, date_format=date_format)
+        return self.json_client.save(json, reference, symbol, json_format=json_format)
+
+    def retrieve(self, reference, symbol, start=None, end=None, json_format=DEFAULT_JSON_FORMAT, date_format=DEFAULT_DATE_FORMAT):
+        json = self.json_client.retrieve(reference, symbol, start=start, end=end, json_format=json_format, date_format=date_format)
+        return None is json is None else pandas.read_json(json, orient=json_format)
+
+    def delete(self, reference, symbol):
+        return self.json_client.delete(reference, symbol)
+
+
+class JSONStoreRestClient(object):
 
     def __init__(self, host=DEFAULT_HOST):
         self.host = host
 
-    def save(self, data, reference, symbol, jsonformat=DEFAULT_JSON_FORMAT):
-        json = data.to_json(orient=jsonformat, date_format='iso')
+    def save(self, json, reference, symbol, json_format=DEFAULT_JSON_FORMAT):
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        url = '{host}{api_prefix}/{reference}/{symbol}?jsonformat={jsonformat}'.format(host=self.host,
-                                                                                       api_prefix=API_URL_PREFIX,
-                                                                                       reference=reference,
-                                                                                       symbol=symbol,
-                                                                                       jsonformat=jsonformat)
+        url = '{host}{api_prefix}/{reference}/{symbol}?json_format={json_format}'.format(host=self.host,
+                                                                                         api_prefix=API_URL_PREFIX,
+                                                                                         reference=reference,
+                                                                                         symbol=symbol,
+                                                                                         json_format=json_format)
         response = requests.post(url, data=json, headers=headers)
         return response.status_code in [200, 201]
 
-    def retrieve(self, reference, symbol, start=None, end=None, jsonformat=DEFAULT_JSON_FORMAT):
-        url = '{host}{api_prefix}/{reference}/{symbol}?jsonformat={jsonformat}'.format(host=self.host,
-                                                                                       api_prefix=API_URL_PREFIX,
-                                                                                       reference=reference,
-                                                                                       symbol=symbol,
-                                                                                       jsonformat=jsonformat)
+    def retrieve(self, reference, symbol, start=None, end=None, json_format=DEFAULT_JSON_FORMAT, date_format=DEFAULT_DATE_FORMAT):
+        url_base = '{host}{api_prefix}/{reference}/{symbol}?json_format={json_format}&date_format={date_format}'
+        url = url_base.format(host=self.host,
+                              api_prefix=API_URL_PREFIX,
+                              reference=reference,
+                              symbol=symbol,
+                              json_format=json_format,
+                              date_format=date_format)
         if start:
             url += '&start=%s' % start.isoformat()
         if end:
@@ -40,7 +59,7 @@ class StoreRestClient(object):
             return None
 
         json = response.text
-        return pandas.read_json(json, orient=jsonformat)
+        return json
 
     def delete(self, reference, symbol):
         url = '{host}{api_prefix}/{reference}/{symbol}'.format(host=self.host,
@@ -49,13 +68,3 @@ class StoreRestClient(object):
                                                                symbol=symbol)
         response = requests.delete(url)
         return response.status_code in [200, 204]
-
-
-class StoreRestDatasource(object):
-
-    def __init__(self, reference, host=DEFAULT_HOST):
-        self.reference = reference
-        self.rest_client = StoreRestClient(host)
-
-    def evaluate(self, context, symbol, start=None, end=None):
-        return self.rest_client.retrieve(self.reference, symbol, start=start, end=end)

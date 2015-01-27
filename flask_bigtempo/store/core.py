@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-import flask
-
 try:
     from flask import _app_ctx_stack as stack
 except ImportError:
@@ -15,21 +13,21 @@ from .storages import SQLAlchemyStorage
 
 class DatastoreAPI(object):
 
-    def __init__(self, app=None, sqlengine=None):
+    def __init__(self, app=None, sql_engine=None):
         self._storage = None
 
         self.app = app
-        self.sqlengine = sqlengine
+        self.sql_engine = sql_engine
 
-        if app is not None and sqlengine is not None:
-            self.init_app(app, sqlengine)
+        if app is not None and sql_engine is not None:
+            self.init_app(app, sql_engine)
 
-    def init_app(self, app, sqlengine):
+    def init_app(self, app, sql_engine):
         app.register_blueprint(new_blueprint(self.instance))
 
     def _lazyload_instance(self):
         if self._storage is None:
-            self._storage = SQLAlchemyStorage(self.sqlengine, '{reference}__{symbol}')
+            self._storage = SQLAlchemyStorage(self.sql_engine, '{reference}__{symbol}')
         return self._storage
 
     @property

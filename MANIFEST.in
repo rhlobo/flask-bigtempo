@@ -1,5 +1,5 @@
 include README.md
 include LICENSE
 include requirements.txt
-recursive-include *.py
+recursive-include flask_bigtempo *.py
 graft scripts
