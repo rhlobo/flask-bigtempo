@@ -21,8 +21,9 @@ def new_blueprint(bigtempo_engine,
         start = butils.parse_datetime_str(flask.request.args.get('start', None))
         end = butils.parse_datetime_str(flask.request.args.get('end', None))
 
-        datasource = bigtempo_engine.get(reference)
-        if datasource is None:
+        try:
+            datasource = bigtempo_engine.get(reference)
+        except KeyError:
             flask.abort(404)
 
         data = datasource.process(symbol, start, end)
@@ -31,6 +32,12 @@ def new_blueprint(bigtempo_engine,
 
         json = data.to_json(orient=json_format, date_format=date_format)
         return flask.Response(json, content_type='application/json')
+
+
+    @blueprint.route('/select/all', methods=['GET'])
+    def select_all():
+        data = bigtempo_engine.select().all()
+        return flask.jsonify(data)
 
 
     return blueprint
