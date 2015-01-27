@@ -16,7 +16,7 @@ class DFBigtempoRestClient(object):
 
     def process(self, reference, symbol, start=None, end=None, json_format=DEFAULT_JSON_FORMAT, date_format=DEFAULT_DATE_FORMAT):
         json = self.json_client.process(reference, symbol, start=start, end=end, json_format=json_format, date_format=date_format)
-        return None is json is None else pandas.read_json(json, orient=json_format)
+        return None if json is None else pandas.read_json(json, orient=json_format)
 
 
 class JSONBigtempoRestClient(object):
