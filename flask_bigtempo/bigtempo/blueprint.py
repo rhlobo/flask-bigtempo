@@ -37,7 +37,7 @@ def new_blueprint(bigtempo_engine,
     @blueprint.route('/select/all', methods=['GET'])
     def select_all():
         data = bigtempo_engine.select().all()
-        return flask.jsonify(data)
+        return flask.jsonify({'selected': list(data)})
 
 
     return blueprint
