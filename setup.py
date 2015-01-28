@@ -85,7 +85,8 @@ setup(
                        'LICENSE',
                        'requirements.txt',
                        'scripts/store_api']},
-    scripts=['scripts/store_api'],
+    scripts=['scripts/store_api',
+             'scripts/bigtempo_api'],
 
     include_package_data=True,
     zip_safe=False
