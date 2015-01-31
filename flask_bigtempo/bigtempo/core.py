@@ -39,6 +39,6 @@ class BigtempoAPI(object):
 
     def create_datasource_factory(self, datastore):
         if isinstance(datastore, basestring):
-            return RemoteDatasourceFactory(engine, datastore)
+            return RemoteDatasourceFactory(self.engine, datastore)
         else:
-            return LocalDatasourceFactory(engine, datastore)
+            return LocalDatasourceFactory(self.engine, datastore)
