@@ -8,6 +8,7 @@ except ImportError:
     from flask import _request_ctx_stack as stack
 
 from .blueprint import new_blueprint
+from .datastores import RemoteDatasourceFactory, LocalDatasourceFactory
 
 
 class BigtempoAPI(object):
@@ -35,3 +36,9 @@ class BigtempoAPI(object):
     @property
     def engine(self):
         return self.instance
+
+    def create_datasource_factory(self, datastore):
+        if isinstance(datastore, basestring):
+            return RemoteDatasourceFactory(engine, datastore)
+        else:
+            return LocalDatasourceFactory(engine, datastore)
